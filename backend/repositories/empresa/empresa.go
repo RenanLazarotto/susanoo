@@ -1,13 +1,12 @@
 package empresa
 
 import (
-	"github.com/charmbracelet/log"
-
+	"tsukuyomi/models"
 	"tsukuyomi/repositories"
 )
 
 type Repository interface {
-	TestConnection()
+	Create(e models.Empresa) (models.Empresa, error)
 }
 
 type repository struct {
@@ -20,20 +19,15 @@ func NewRepository(repo repositories.Repository) Repository {
 	}
 }
 
-func (r *repository) TestConnection() {
-	//r.DB().BeginTransaction()
-	db, err := r.DB().Query()
+func (r *repository) Create(e models.Empresa) (models.Empresa, error) {
+	tx := r.DB().BeginTransaction()
+	result := tx.Create(&e)
 
-	if err != nil {
-		log.Fatal(err)
+	if result.Error != nil {
+		r.DB().Rollback()
+		return e, result.Error
 	}
 
-	result := struct {
-		One string
-		Two int
-	}{}
-
-	db.Raw("SELECT 'string' as One, 1234 as Two").Scan(&result)
-
-	log.Info(result)
+	r.DB().Commit()
+	return e, nil
 }
