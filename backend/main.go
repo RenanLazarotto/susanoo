@@ -8,6 +8,8 @@ import (
 	"github.com/charmbracelet/log"
 
 	"tsukuyomi/config"
+	"tsukuyomi/repositories"
+	"tsukuyomi/repositories/empresa"
 )
 
 func main() {
@@ -51,5 +53,8 @@ func main() {
 	log.Info("Starting...")
 	config := config.Load()
 
-	log.Info("Config loaded!", "config", config)
+	log.Info("Config loaded")
+
+	empresaRepository := empresa.NewRepository(repositories.NewRepository(config))
+	empresaRepository.TestConnection()
 }
