@@ -17,6 +17,7 @@ type Database struct {
 	Port      int
 	User      string
 	Pass      string
+	Schema    string
 	Charset   string
 	Collation string
 }
@@ -54,6 +55,7 @@ func Load() *Config {
 		Port:      viper.GetInt("database.port"),
 		User:      viper.GetString("database.user"),
 		Pass:      viper.GetString("database.pass"),
+		Schema:    viper.GetString("database.schema"),
 		Charset:   viper.GetString("database.charset"),
 		Collation: viper.GetString("database.collation"),
 	}
@@ -86,6 +88,7 @@ func (d Database) Validate() error {
 		validation.Field(&d.Port, validation.Required),
 		validation.Field(&d.User, validation.Required),
 		validation.Field(&d.Pass, validation.Required),
+		validation.Field(&d.Schema, validation.Required),
 		validation.Field(&d.Charset, validation.Required),
 		validation.Field(&d.Collation, validation.Required),
 	)
