@@ -1,6 +1,8 @@
 package empresa
 
 import (
+	"gorm.io/gorm"
+
 	"tsukuyomi/models"
 	"tsukuyomi/repositories"
 )
@@ -73,6 +75,11 @@ func (r *repository) Update(e models.Empresa) (models.Empresa, error) {
 	if result.Error != nil {
 		r.DB().Rollback()
 		return e, result.Error
+	}
+
+	if result.RowsAffected == 0 {
+		r.DB().Commit()
+		return e, gorm.ErrRecordNotFound
 	}
 
 	r.DB().Commit()

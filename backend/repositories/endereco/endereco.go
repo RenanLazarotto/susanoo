@@ -3,6 +3,8 @@ package endereco
 import (
 	"tsukuyomi/models"
 	"tsukuyomi/repositories"
+
+	"gorm.io/gorm"
 )
 
 type Repository interface {
@@ -73,6 +75,11 @@ func (r *repository) Update(e models.Endereco) (models.Endereco, error) {
 	if result.Error != nil {
 		r.DB().Rollback()
 		return e, result.Error
+	}
+
+	if result.RowsAffected == 0 {
+		r.DB().Commit()
+		return e, gorm.ErrRecordNotFound
 	}
 
 	r.DB().Commit()
