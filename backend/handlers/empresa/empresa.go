@@ -7,7 +7,7 @@ import (
 	"gorm.io/gorm"
 
 	"tsukuyomi/models"
-	es "tsukuyomi/services/empresa"
+	empresaService "tsukuyomi/services/empresa"
 )
 
 type EmpresaHandler interface {
@@ -17,10 +17,10 @@ type EmpresaHandler interface {
 	Update(c *fiber.Ctx) error
 }
 type empresaHandler struct {
-	Service es.Service
+	Service empresaService.Service
 }
 
-func NewHandler(service es.Service) EmpresaHandler {
+func NewHandler(service empresaService.Service) EmpresaHandler {
 	return &empresaHandler{
 		Service: service,
 	}
@@ -87,14 +87,20 @@ func (h *empresaHandler) GetByID(c *fiber.Ctx) error {
 
 func (h *empresaHandler) Update(c *fiber.Ctx) error {
 	empresa := new(models.Empresa)
-
 	c.BodyParser(&empresa)
+
+	if empresa.ID == 0 {
+		return c.Status(fiber.StatusInternalServerError).JSON(models.Response{
+			Meta:  models.Meta{Count: 0},
+			Error: "id is required",
+		})
+	}
 
 	result, err := h.Service.Update(*empresa)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(models.Response{
 			Meta:  models.Meta{Count: 0},
-			Error: err,
+			Error: err.Error(),
 		})
 	}
 
