@@ -16,5 +16,8 @@ func RegisterRoutes(app *fiber.App, repository repositories.Repository) {
 	handler := eh.NewHandler(empresaService)
 
 	router := app.Group("/empresa")
-	router.Post("/create", handler.Create)
+	router.Post("/", handler.Create)
+	router.Get("/", handler.GetAll)
+	router.Get("/:id", handler.GetByID)
+	router.Put("/", handler.Update)
 }

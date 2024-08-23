@@ -17,6 +17,7 @@ type Empresa struct {
 }
 
 func (e *Empresa) AfterCreate(tx *gorm.DB) error {
+	// TODO: insert log reg
 	log.Info("Created empresa", "empresa", e)
 	return nil
 }
