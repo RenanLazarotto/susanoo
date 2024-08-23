@@ -5,14 +5,15 @@ meta {
 }
 
 put {
-  url: http://localhost:1991/empresa/update/1
+  url: {{host}}:{{port}}/empresa
   body: json
   auth: none
 }
 
 body:json {
   {
-    "nome": "Teste de update",
-    "cnpj": "66.466.216/0001-15"
+    "id": 90,
+    "nome": "Teste de update via Bruno",
+    "cnpj": "39.566.099/0001-98"
   }
 }
