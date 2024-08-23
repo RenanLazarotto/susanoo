@@ -35,7 +35,7 @@ func (h *enderecoHandler) Create(c *fiber.Ctx) error {
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(models.Response{
 			Meta:  models.Meta{Count: 0},
-			Error: err,
+			Error: err.Error(),
 		})
 	}
 
@@ -53,7 +53,7 @@ func (h *enderecoHandler) GetAll(c *fiber.Ctx) error {
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(models.Response{
 			Meta:  models.Meta{Count: 0},
-			Error: err,
+			Error: err.Error(),
 		})
 	}
 
@@ -75,7 +75,7 @@ func (h *enderecoHandler) GetByID(c *fiber.Ctx) error {
 		}
 		return c.Status(fiber.StatusInternalServerError).JSON(models.Response{
 			Meta:  models.Meta{Count: 0},
-			Error: err,
+			Error: err.Error(),
 		})
 	}
 
@@ -100,7 +100,7 @@ func (h *enderecoHandler) Update(c *fiber.Ctx) error {
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(models.Response{
 			Meta:  models.Meta{Count: 0},
-			Error: err,
+			Error: err.Error(),
 		})
 	}
 

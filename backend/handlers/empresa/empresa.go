@@ -35,7 +35,7 @@ func (h *empresaHandler) Create(c *fiber.Ctx) error {
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(models.Response{
 			Meta:  models.Meta{Count: 0},
-			Error: err,
+			Error: err.Error(),
 		})
 	}
 
@@ -53,7 +53,7 @@ func (h *empresaHandler) GetAll(c *fiber.Ctx) error {
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(models.Response{
 			Meta:  models.Meta{Count: 0},
-			Error: err,
+			Error: err.Error(),
 		})
 	}
 
@@ -75,7 +75,7 @@ func (h *empresaHandler) GetByID(c *fiber.Ctx) error {
 		}
 		return c.Status(fiber.StatusInternalServerError).JSON(models.Response{
 			Meta:  models.Meta{Count: 0},
-			Error: err,
+			Error: err.Error(),
 		})
 	}
 
