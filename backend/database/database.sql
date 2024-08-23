@@ -15,15 +15,15 @@ CREATE TABLE empresas (
 CREATE TABLE enderecos (
 	id INTEGER NOT NULL AUTO_INCREMENT UNIQUE,
 	logradouro VARCHAR(255) NOT NULL UNIQUE,
-	numero INTEGER NOT NULL,
+	numero VARCHAR(10) NOT NULL,
 	complemento VARCHAR(100),
 	bairro VARCHAR(100) NOT NULL,
 	cidade VARCHAR(100) NOT NULL,
 	cep VARCHAR(9) NOT NULL,
 	estado VARCHAR(20),
 	criado DATETIME NOT NULL,
-	apagado DATETIME,
 	atualizado DATETIME,
+	apagado DATETIME,
 	PRIMARY KEY(id)
 );
 
