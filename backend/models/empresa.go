@@ -8,7 +8,7 @@ import (
 )
 
 type Empresa struct {
-	ID         int            `gorm:"primaryKey"`
+	ID         int            `gorm:"primaryKey" json:"id"`
 	Nome       string         `gorm:"column:nome;size:255" json:"nome"`
 	CNPJ       string         `gorm:"column:cnpj;size:20" json:"cnpj"`
 	Criado     time.Time      `gorm:"column:criado;autoCreateTime"`
