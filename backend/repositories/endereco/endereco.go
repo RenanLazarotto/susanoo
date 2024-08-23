@@ -1,10 +1,10 @@
 package endereco
 
 import (
+	"gorm.io/gorm"
+
 	"tsukuyomi/models"
 	"tsukuyomi/repositories"
-
-	"gorm.io/gorm"
 )
 
 type Repository interface {
