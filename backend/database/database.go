@@ -7,6 +7,7 @@ import (
 	"github.com/charmbracelet/log"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 
 	"tsukuyomi/config"
 )
@@ -35,7 +36,9 @@ func New(config *config.Config) Service {
 		config.Database.Collation,
 	)
 
-	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
+	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{
+		Logger: NewDatabaseLogger().LogMode(logger.Info),
+	})
 	if err != nil {
 		log.Fatal(err)
 	}
