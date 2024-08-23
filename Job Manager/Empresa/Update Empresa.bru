@@ -1,0 +1,18 @@
+meta {
+  name: Update Empresa
+  type: http
+  seq: 2
+}
+
+put {
+  url: http://localhost:1991/empresa/update/1
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "nome": "Teste de update",
+    "cnpj": "66.466.216/0001-15"
+  }
+}

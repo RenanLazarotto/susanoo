@@ -1,0 +1,17 @@
+meta {
+  name: Get Empresas
+  type: http
+  seq: 2
+}
+
+get {
+  url: http://localhost:1991/empresa/
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "id": 18
+  }
+}
