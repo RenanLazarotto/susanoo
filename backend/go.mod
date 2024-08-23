@@ -5,6 +5,7 @@ go 1.22.6
 require (
 	github.com/charmbracelet/lipgloss v0.10.0
 	github.com/charmbracelet/log v0.4.0
+	github.com/gofiber/fiber/v2 v2.52.5
 	github.com/invopop/validation v0.8.0
 	github.com/spf13/viper v1.19.0
 	gorm.io/driver/mysql v1.5.7
@@ -17,7 +18,6 @@ require (
 	github.com/fsnotify/fsnotify v1.7.0 // indirect
 	github.com/go-logfmt/logfmt v0.6.0 // indirect
 	github.com/go-sql-driver/mysql v1.7.0 // indirect
-	github.com/gofiber/fiber/v2 v2.52.5 // indirect
 	github.com/google/uuid v1.5.0 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
