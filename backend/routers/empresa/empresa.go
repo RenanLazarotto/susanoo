@@ -3,17 +3,17 @@ package empresa
 import (
 	"github.com/gofiber/fiber/v2"
 
-	eh "tsukuyomi/handlers/empresa"
+	empresaHandler "tsukuyomi/handlers/empresa"
 	"tsukuyomi/repositories"
-	er "tsukuyomi/repositories/empresa"
-	es "tsukuyomi/services/empresa"
+	empresaRepository "tsukuyomi/repositories/empresa"
+	empresaService "tsukuyomi/services/empresa"
 )
 
 func RegisterRoutes(app *fiber.App, repository repositories.Repository) {
-	empresaRepository := er.NewRepository(repository)
-	empresaService := es.NewService(empresaRepository)
+	empresaRepository := empresaRepository.NewRepository(repository)
+	empresaService := empresaService.NewService(empresaRepository)
 
-	handler := eh.NewHandler(empresaService)
+	handler := empresaHandler.NewHandler(empresaService)
 
 	router := app.Group("/empresa")
 	router.Post("/", handler.Create)
