@@ -1,0 +1,429 @@
+basePath: /
+definitions:
+  models.Response:
+    properties:
+      count:
+        type: integer
+      data: {}
+      errors:
+        items:
+          type: string
+        type: array
+      message:
+        type: string
+    type: object
+info:
+  contact: {}
+  description: API Backend for JobManager application
+  title: JobManager API
+  version: 0.1.0
+paths:
+  /empresa:
+    get:
+      consumes:
+      - application/json
+      description: Retorna todos as empresas que atendam aos critérios informados
+      parameters:
+      - description: Campo aberto para pesquisa
+        in: query
+        name: search
+        type: string
+      - description: Nome da empresa
+        in: query
+        name: nome
+        type: string
+      - description: CNPJ da empresa
+        in: query
+        name: cnpj
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.Response'
+      summary: Retorna todos as empresas
+      tags:
+      - Empresa
+    post:
+      consumes:
+      - application/json
+      description: Cadastra um nova empresa de acordo com as informações fornecidas
+      parameters:
+      - description: Nome da empresa
+        in: body
+        name: nome
+        required: true
+        schema:
+          type: string
+      - description: CNPJ da empresa
+        in: body
+        name: cnpj
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.Response'
+      summary: Cadastra um nova empresa
+      tags:
+      - Empresa
+  /empresa/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Realiza um soft-delete de uma empresa com base no ID informado
+      parameters:
+      - description: O ID da empresa a ser apagada
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.Response'
+      summary: Apaga uma empresa
+      tags:
+      - Empresa
+    get:
+      consumes:
+      - application/json
+      description: Retorna as informações de uma empresa de acordo com seu ID
+      parameters:
+      - description: O ID da empresa para retornar
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.Response'
+      summary: Consulta uma empresa por ID
+      tags:
+      - Empresa
+    put:
+      consumes:
+      - application/json
+      description: Atualiza um registro de empresa de acordo com o ID e as informações
+        informadas
+      parameters:
+      - description: O ID da empresa a ser atualizada
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Nome da empresa
+        in: body
+        name: nome
+        schema:
+          type: string
+      - description: CNPJ da empresa
+        in: body
+        name: cnpj
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.Response'
+      summary: Atualiza uma empresa
+      tags:
+      - Empresa
+  /endereco:
+    get:
+      consumes:
+      - application/json
+      description: Retorna todos os endereços que atendam aos critérios informados
+      parameters:
+      - description: Campo aberto para pesquisa
+        in: query
+        name: search
+        type: string
+      - description: Logradouro do endereço
+        in: query
+        name: logradouro
+        type: string
+      - description: Número do endereço
+        in: query
+        name: numero
+        type: string
+      - description: Complemento do endereço, caso exista
+        in: query
+        name: complemento
+        type: string
+      - description: Nome do bairro
+        in: query
+        name: bairro
+        type: string
+      - description: Nome da cidade
+        in: query
+        name: cidade
+        type: string
+      - description: CEP
+        in: query
+        name: cep
+        type: string
+      - description: Estado
+        in: query
+        name: estado
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.Response'
+      summary: Retorna todos os endereços
+      tags:
+      - Endereco
+    post:
+      consumes:
+      - application/json
+      description: Cadastra um novo endereço de acordo com as informações fornecidas
+      parameters:
+      - description: Logradouro do endereço
+        in: body
+        name: logradouro
+        required: true
+        schema:
+          type: string
+      - description: Número do endereço
+        in: body
+        name: numero
+        required: true
+        schema:
+          type: string
+      - description: Complemento do endereço, caso exista
+        in: body
+        name: complemento
+        schema:
+          type: string
+      - description: Nome do bairro
+        in: body
+        name: bairro
+        required: true
+        schema:
+          type: string
+      - description: Nome da cidade
+        in: body
+        name: cidade
+        required: true
+        schema:
+          type: string
+      - description: CEP
+        in: body
+        name: cep
+        required: true
+        schema:
+          type: string
+      - description: Estado
+        in: body
+        name: estado
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.Response'
+      summary: Cadastra um novo endereço
+      tags:
+      - Endereco
+  /endereco/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Realiza um soft-delete de um endereço com base no ID informado
+      parameters:
+      - description: O ID do endereço a ser apagado
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.Response'
+      summary: Apaga um endereço
+      tags:
+      - Endereco
+    get:
+      consumes:
+      - application/json
+      description: Retorna as informações de um endereço de acordo com seu ID
+      parameters:
+      - description: O ID do endereço para retornar
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.Response'
+      summary: Consulta um endereço por ID
+      tags:
+      - Endereco
+    put:
+      consumes:
+      - application/json
+      description: Atualiza um registro de endereço de acordo com o ID e as informações
+        informadas
+      parameters:
+      - description: O ID do endereço a ser atualizado
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Logradouro do endereço
+        in: body
+        name: logradouro
+        schema:
+          type: string
+      - description: Número do endereço
+        in: body
+        name: numero
+        schema:
+          type: string
+      - description: Complemento do endereço, caso exista
+        in: body
+        name: complemento
+        schema:
+          type: string
+      - description: Nome do bairro
+        in: body
+        name: bairro
+        schema:
+          type: string
+      - description: Nome da cidade
+        in: body
+        name: cidade
+        schema:
+          type: string
+      - description: CEP
+        in: body
+        name: cep
+        schema:
+          type: string
+      - description: Estado
+        in: body
+        name: estado
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.Response'
+      summary: Atualiza um endereço
+      tags:
+      - Endereco
+swagger: "2.0"

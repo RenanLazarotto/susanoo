@@ -12,6 +12,10 @@ import (
 	"tsukuyomi/routers"
 )
 
+// @title JobManager API
+// @version 0.1.0
+// @description API Backend for JobManager application
+// @BasePath /
 func main() {
 	config.SetupLog()
 	log.Info("Starting...")
