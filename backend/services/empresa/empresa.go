@@ -1,15 +1,18 @@
 package empresa
 
 import (
+	"context"
+
 	"tsukuyomi/models"
 	"tsukuyomi/repositories/empresa"
 )
 
 type Service interface {
-	Create(model models.Empresa) (models.Empresa, error)
-	GetAll(criteria map[string]interface{}) ([]models.Empresa, error)
-	GetByID(id string) (models.Empresa, error)
-	Update(model models.Empresa) (models.Empresa, error)
+	Create(ctx context.Context, empresa models.Empresa) (models.Empresa, error)
+	FindAll(ctx context.Context, search, nome, cnpj string) ([]models.Empresa, error)
+	FindByID(ctx context.Context, id string) (models.Empresa, error)
+	Update(ctx context.Context, empresa models.Empresa) error
+	Delete(ctx context.Context, id string) error
 }
 
 type service struct {
@@ -22,18 +25,22 @@ func NewService(repository empresa.Repository) Service {
 	}
 }
 
-func (e *service) Create(model models.Empresa) (models.Empresa, error) {
-	return e.repository.Create(model)
+func (s *service) Create(ctx context.Context, empresa models.Empresa) (models.Empresa, error) {
+	return s.repository.Create(ctx, empresa)
 }
 
-func (e *service) GetAll(criteria map[string]interface{}) ([]models.Empresa, error) {
-	return e.repository.GetAll(criteria)
+func (s *service) FindAll(ctx context.Context, search, nome, cnpj string) ([]models.Empresa, error) {
+	return s.repository.FindAll(ctx, search, nome, cnpj)
 }
 
-func (e *service) GetByID(id string) (models.Empresa, error) {
-	return e.repository.GetByID(id)
+func (s *service) FindByID(ctx context.Context, id string) (models.Empresa, error) {
+	return s.repository.FindByID(ctx, id)
 }
 
-func (e *service) Update(model models.Empresa) (models.Empresa, error) {
-	return e.repository.Update(model)
+func (s *service) Update(ctx context.Context, empresa models.Empresa) error {
+	return s.repository.Update(ctx, empresa)
+}
+
+func (s *service) Delete(ctx context.Context, id string) error {
+	return s.repository.Delete(ctx, id)
 }

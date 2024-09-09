@@ -1,15 +1,18 @@
 package endereco
 
 import (
+	"context"
+
 	"tsukuyomi/models"
 	"tsukuyomi/repositories/endereco"
 )
 
 type Service interface {
-	Create(model models.Endereco) (models.Endereco, error)
-	GetAll(criteria map[string]interface{}) ([]models.Endereco, error)
-	GetByID(id string) (models.Endereco, error)
-	Update(model models.Endereco) (models.Endereco, error)
+	Create(ctx context.Context, endereco models.Endereco) (models.Endereco, error)
+	FindAll(ctx context.Context, search, logradouro, numero, complemento, bairro, cidade, cep, estado string) ([]models.Endereco, error)
+	FindByID(ctx context.Context, id string) (models.Endereco, error)
+	Update(ctx context.Context, endereco models.Endereco) error
+	Delete(ctx context.Context, id string) error
 }
 
 type service struct {
@@ -22,18 +25,22 @@ func NewService(repository endereco.Repository) Service {
 	}
 }
 
-func (e *service) Create(model models.Endereco) (models.Endereco, error) {
-	return e.repository.Create(model)
+func (e *service) Create(ctx context.Context, endereco models.Endereco) (models.Endereco, error) {
+	return e.repository.Create(ctx, endereco)
 }
 
-func (e *service) GetAll(criteria map[string]interface{}) ([]models.Endereco, error) {
-	return e.repository.GetAll(criteria)
+func (e *service) FindAll(ctx context.Context, search, logradouro, numero, complemento, bairro, cidade, cep, estado string) ([]models.Endereco, error) {
+	return e.repository.FindAll(ctx, search, logradouro, numero, complemento, bairro, cidade, cep, estado)
 }
 
-func (e *service) GetByID(id string) (models.Endereco, error) {
-	return e.repository.GetByID(id)
+func (e *service) FindByID(ctx context.Context, id string) (models.Endereco, error) {
+	return e.repository.FindByID(ctx, id)
 }
 
-func (e *service) Update(model models.Endereco) (models.Endereco, error) {
-	return e.repository.Update(model)
+func (e *service) Update(ctx context.Context, endereco models.Endereco) error {
+	return e.repository.Update(ctx, endereco)
+}
+
+func (e *service) Delete(ctx context.Context, id string) error {
+	return e.repository.Delete(ctx, id)
 }
