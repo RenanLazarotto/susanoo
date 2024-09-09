@@ -1,11 +1,12 @@
 package models
 
-type Meta struct {
-	Count int `json:"count"`
+type ResponseData interface {
+	interface{} | []interface{}
 }
 
 type Response struct {
-	Meta  Meta        `json:"meta,omitempty"`
-	Data  interface{} `json:"data,omitempty"`
-	Error interface{} `json:"errors,omitempty"`
+	Count   int          `json:"count,omitempty"`
+	Data    ResponseData `json:"data,omitempty"`
+	Errors  []string     `json:"errors,omitempty"`
+	Message string       `json:"message,omitempty"`
 }
