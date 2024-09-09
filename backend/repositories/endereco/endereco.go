@@ -1,17 +1,21 @@
 package endereco
 
 import (
-	"gorm.io/gorm"
+	"context"
+	"fmt"
+
+	"github.com/charmbracelet/log"
 
 	"tsukuyomi/models"
 	"tsukuyomi/repositories"
 )
 
 type Repository interface {
-	Create(e models.Endereco) (models.Endereco, error)
-	GetAll(criteria map[string]interface{}) ([]models.Endereco, error)
-	GetByID(id string) (models.Endereco, error)
-	Update(e models.Endereco) (models.Endereco, error)
+	Create(ctx context.Context, endereco models.Endereco) (models.Endereco, error)
+	FindAll(ctx context.Context, search, logradouro, numero, complemento, bairro, cidade, cep, estado string) ([]models.Endereco, error)
+	FindByID(ctx context.Context, id string) (models.Endereco, error)
+	Update(ctx context.Context, endereco models.Endereco) error
+	Delete(ctx context.Context, id string) error
 }
 
 type repository struct {
@@ -24,64 +28,301 @@ func NewRepository(repo repositories.Repository) Repository {
 	}
 }
 
-func (r *repository) Create(e models.Endereco) (models.Endereco, error) {
-	tx := r.DB().BeginTransaction()
-	result := tx.Create(&e)
+func (r *repository) Create(ctx context.Context, endereco models.Endereco) (models.Endereco, error) {
+	result, err := r.DB().Write(
+		ctx,
+		`INSERT INTO enderecos(logradouro, numero, complemento, bairro, cidade, cep, estado, criado)
+		VALUES(?, ?, ?, ?, ?, ?, ?, ?)`,
+		endereco.Logradouro,
+		endereco.Numero,
+		endereco.Complemento,
+		endereco.Bairro,
+		endereco.Cidade,
+		endereco.CEP,
+		endereco.Estado,
+		endereco.Criado,
+	)
 
-	if result.Error != nil {
-		r.DB().Rollback()
-		return e, result.Error
-	}
-
-	r.DB().Commit()
-	return e, nil
-}
-
-func (r *repository) GetAll(criteria map[string]interface{}) ([]models.Endereco, error) {
-	empresas := []models.Endereco{}
-	q, err := r.DB().Query()
 	if err != nil {
-		return empresas, err
-	}
-	result := q.Where(criteria).Find(&empresas)
-
-	if result.Error != nil {
-		return empresas, result.Error
+		log.Error(repositories.ERROR_INSERT, err)
+		return models.Endereco{}, err
 	}
 
-	return empresas, nil
-}
-
-func (r *repository) GetByID(id string) (models.Endereco, error) {
-	empresa := models.Endereco{}
-	q, err := r.DB().Query()
+	id, err := result.LastInsertId()
 	if err != nil {
-		return empresa, err
-	}
-	result := q.Where("id = ?", id).First(&empresa)
-
-	if result.Error != nil {
-		return empresa, result.Error
+		log.Error(repositories.ERROR_INSERT, err)
+		return models.Endereco{}, err
 	}
 
-	return empresa, nil
+	endereco.ID = id
+
+	return endereco, nil
 }
 
-func (r *repository) Update(e models.Endereco) (models.Endereco, error) {
-	tx := r.DB().BeginTransaction()
+func (r *repository) FindAll(ctx context.Context, search, logradouro, numero, complemento, bairro, cidade, cep, estado string) ([]models.Endereco, error) {
+	arguments := []interface{}{}
+	var searchLike string
 
-	result := tx.Model(&e).Updates(&e)
+	conditions := ""
 
-	if result.Error != nil {
-		r.DB().Rollback()
-		return e, result.Error
+	if search != "" {
+		searchLike = fmt.Sprintf("%%%s%%", search)
+		conditions += " AND (logradouro LIKE ? OR numero LIKE ? OR complemento LIKE ? or bairro LIKE ? OR cidade LIKE ? OR cep LIKE ? OR estado LIKE ?)"
+		arguments = append(arguments, searchLike, searchLike, searchLike, searchLike, searchLike, searchLike, searchLike)
 	}
 
-	if result.RowsAffected == 0 {
-		r.DB().Commit()
-		return e, gorm.ErrRecordNotFound
+	if logradouro != "" {
+		conditions += " AND (logradouro = ?)"
+		arguments = append(arguments, logradouro)
 	}
 
-	r.DB().Commit()
-	return e, nil
+	if numero != "" {
+		conditions += " AND (numero = ?)"
+		arguments = append(arguments, numero)
+	}
+
+	if complemento != "" {
+		conditions += " AND (complemento = ?)"
+		arguments = append(arguments, complemento)
+	}
+
+	if bairro != "" {
+		conditions += " AND (bairro = ?)"
+		arguments = append(arguments, bairro)
+	}
+
+	if cidade != "" {
+		conditions += " AND (cidade = ?)"
+		arguments = append(arguments, cidade)
+	}
+
+	if cep != "" {
+		conditions += " AND (cep = ?)"
+		arguments = append(arguments, cep)
+	}
+
+	if estado != "" {
+		conditions += " AND (estado = ?)"
+		arguments = append(arguments, estado)
+	}
+
+	rows, err := r.DB().Select(
+		ctx,
+		`SELECT	
+			* 
+		FROM enderecos 
+		WHERE apagado IS NULL 
+		`+conditions,
+		arguments...,
+	)
+
+	if err != nil {
+		log.Error(repositories.ERROR_SELECT, err)
+		return []models.Endereco{}, err
+	}
+
+	defer rows.Close()
+
+	var enderecos []models.Endereco
+
+	for rows.Next() {
+		var endereco = &models.Endereco{}
+
+		err = rows.Scan(
+			&endereco.ID,
+			&endereco.Logradouro,
+			&endereco.Numero,
+			&endereco.Complemento,
+			&endereco.Bairro,
+			&endereco.Cidade,
+			&endereco.CEP,
+			&endereco.Estado,
+			&endereco.Criado,
+			&endereco.Apagado,
+			&endereco.Atualizado,
+		)
+
+		if err != nil {
+			log.Error(repositories.ERROR_SELECT_SCAN, err)
+			return []models.Endereco{}, err
+		}
+
+		rows, err := r.DB().Select(
+			ctx,
+			`SELECT	
+				emp.* 
+			FROM empresas emp
+			JOIN endereco_empresa endemp ON emp.id = endemp.id_empresa
+			JOIN enderecos end ON endemp.id_endereco = end.id
+			WHERE end.id = ?
+				AND end.apagado IS NULL
+				AND emp.apagado IS NULL
+				AND endemp.apagado IS NULL`,
+			endereco.ID,
+		)
+
+		if err != nil {
+			log.Error(repositories.ERROR_SELECT, err)
+			return []models.Endereco{}, err
+		}
+
+		defer rows.Close()
+
+		for rows.Next() {
+			var empresa = &models.Empresa{}
+
+			err = rows.Scan(
+				&empresa.ID,
+				&empresa.Nome,
+				&empresa.CNPJ,
+				&empresa.Criado,
+				&empresa.Atualizado,
+				&empresa.Apagado,
+			)
+			if err != nil {
+				log.Error(repositories.ERROR_SELECT_SCAN, err)
+				return []models.Endereco{}, err
+			}
+
+			endereco.Empresas = append(endereco.Empresas, empresa)
+		}
+
+		enderecos = append(enderecos, *endereco)
+	}
+
+	return enderecos, nil
+}
+
+func (r *repository) FindByID(ctx context.Context, id string) (models.Endereco, error) {
+	rows, err := r.DB().Select(
+		ctx,
+		`SELECT	
+			* 
+		FROM enderecos 
+		WHERE apagado IS NULL 
+		AND id = ?`,
+		id,
+	)
+
+	if err != nil {
+		log.Error(repositories.ERROR_SELECT, err)
+		return models.Endereco{}, err
+	}
+
+	defer rows.Close()
+
+	endereco := models.Endereco{}
+
+	for rows.Next() {
+		err = rows.Scan(
+			&endereco.ID,
+			&endereco.Logradouro,
+			&endereco.Numero,
+			&endereco.Complemento,
+			&endereco.Bairro,
+			&endereco.Cidade,
+			&endereco.CEP,
+			&endereco.Estado,
+			&endereco.Criado,
+			&endereco.Atualizado,
+			&endereco.Apagado,
+		)
+
+		if err != nil {
+			log.Error(repositories.ERROR_SELECT_SCAN, err)
+			return models.Endereco{}, err
+		}
+
+		rows, err := r.DB().Select(
+			ctx,
+			`SELECT	
+				emp.* 
+			FROM empresas emp
+			JOIN endereco_empresa endemp ON emp.id = endemp.id_empresa
+			JOIN enderecos end ON endemp.id_endereco = end.id
+			WHERE end.id = ?
+				AND end.apagado IS NULL
+				AND emp.apagado IS NULL
+				AND endemp.apagado IS NULL`,
+			endereco.ID,
+		)
+
+		if err != nil {
+			log.Error(repositories.ERROR_SELECT, err)
+			return models.Endereco{}, err
+		}
+
+		defer rows.Close()
+
+		for rows.Next() {
+			var empresa = &models.Empresa{}
+
+			err = rows.Scan(
+				&empresa.ID,
+				&empresa.Nome,
+				&empresa.CNPJ,
+				&empresa.Criado,
+				&empresa.Atualizado,
+				&empresa.Apagado,
+			)
+			if err != nil {
+				log.Error(repositories.ERROR_SELECT_SCAN, err)
+				return models.Endereco{}, err
+			}
+
+			endereco.Empresas = append(endereco.Empresas, empresa)
+		}
+	}
+
+	return endereco, nil
+}
+
+func (r *repository) Update(ctx context.Context, endereco models.Endereco) error {
+	_, err := r.DB().Write(
+		ctx,
+		`UPDATE enderecos SET 
+		logradouro = ?, 
+		numero = ?, 
+		complemento = ?, 
+		bairro = ?, 
+		cidade = ?, 
+		cep = ?, 
+		estado = ?, 
+		atualizado = ?
+		WHERE id = ?`,
+		endereco.Logradouro,
+		endereco.Numero,
+		endereco.Complemento,
+		endereco.Bairro,
+		endereco.Cidade,
+		endereco.CEP,
+		endereco.Estado,
+		endereco.Atualizado,
+		endereco.ID,
+	)
+
+	if err != nil {
+		log.Error(repositories.ERROR_UPDATE, err)
+		return err
+	}
+
+	return nil
+}
+
+func (r *repository) Delete(ctx context.Context, id string) error {
+	_, err := r.DB().Write(
+		ctx,
+		`UPDATE enderecos SET 
+		atualizado = CURRENT_DATE(),
+		apagado = CURRENT_DATE()
+		WHERE id = ?`,
+		id,
+	)
+
+	if err != nil {
+		log.Error(repositories.ERROR_DELETE, err)
+		return err
+	}
+
+	return nil
 }

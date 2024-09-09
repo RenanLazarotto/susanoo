@@ -1,17 +1,21 @@
 package empresa
 
 import (
-	"gorm.io/gorm"
+	"context"
+	"fmt"
+
+	"github.com/charmbracelet/log"
 
 	"tsukuyomi/models"
 	"tsukuyomi/repositories"
 )
 
 type Repository interface {
-	Create(e models.Empresa) (models.Empresa, error)
-	GetAll(criteria map[string]interface{}) ([]models.Empresa, error)
-	GetByID(id string) (models.Empresa, error)
-	Update(e models.Empresa) (models.Empresa, error)
+	Create(ctx context.Context, empresa models.Empresa) (models.Empresa, error)
+	FindAll(ctx context.Context, search, nome, cnpj string) ([]models.Empresa, error)
+	FindByID(ctx context.Context, id string) (models.Empresa, error)
+	Update(ctx context.Context, empresa models.Empresa) error
+	Delete(ctx context.Context, id string) error
 }
 
 type repository struct {
@@ -24,64 +28,259 @@ func NewRepository(repo repositories.Repository) Repository {
 	}
 }
 
-func (r *repository) Create(e models.Empresa) (models.Empresa, error) {
-	tx := r.DB().BeginTransaction()
-	result := tx.Create(&e)
+func (r *repository) Create(ctx context.Context, empresa models.Empresa) (models.Empresa, error) {
+	result, err := r.DB().Write(
+		ctx,
+		`INSERT INTO empresas(nome, cnpj, criado, atualizado)
+		VALUES(?, ?, ?)`,
+		empresa.Nome,
+		empresa.CNPJ,
+		empresa.Criado,
+	)
 
-	if result.Error != nil {
-		r.DB().Rollback()
-		return e, result.Error
+	if err != nil {
+		log.Error(repositories.ERROR_INSERT, err)
+		return models.Empresa{}, err
 	}
 
-	r.DB().Commit()
-	return e, nil
+	id, err := result.LastInsertId()
+	if err != nil {
+		log.Error(repositories.ERROR_INSERT, err)
+		return models.Empresa{}, err
+	}
+
+	empresa.ID = id
+
+	return empresa, nil
 }
 
-func (r *repository) GetAll(criteria map[string]interface{}) ([]models.Empresa, error) {
-	empresas := []models.Empresa{}
-	q, err := r.DB().Query()
-	if err != nil {
-		return empresas, err
-	}
-	result := q.Where(criteria).Find(&empresas)
+func (r *repository) FindAll(ctx context.Context, search, nome, cnpj string) ([]models.Empresa, error) {
+	arguments := []interface{}{}
+	var searchLike string
 
-	if result.Error != nil {
-		return empresas, result.Error
+	conditions := ""
+
+	if search != "" {
+		searchLike = fmt.Sprintf("%%%s%%", search)
+		conditions += " AND (nome LIKE ? OR cnpj LIKE ?)"
+		arguments = append(arguments, searchLike, searchLike)
+	}
+
+	if nome != "" {
+		conditions += " AND (nome = ?)"
+		arguments = append(arguments, nome)
+	}
+
+	if cnpj != "" {
+		conditions += " AND (cnpj = ?)"
+		arguments = append(arguments, cnpj)
+	}
+
+	rows, err := r.DB().Select(
+		ctx,
+		`SELECT	
+			* 
+		FROM empresas 
+		WHERE apagado IS NULL 
+		`+conditions,
+		arguments...,
+	)
+
+	if err != nil {
+		log.Error(repositories.ERROR_SELECT, err)
+		return []models.Empresa{}, err
+	}
+
+	defer rows.Close()
+
+	var empresas []models.Empresa
+
+	for rows.Next() {
+		var empresa = &models.Empresa{}
+
+		err := rows.Scan(
+			&empresa.ID,
+			&empresa.Nome,
+			&empresa.CNPJ,
+			&empresa.Criado,
+			&empresa.Atualizado,
+			&empresa.Apagado,
+		)
+
+		if err != nil {
+			log.Error(repositories.ERROR_SELECT_SCAN, err)
+			return []models.Empresa{}, err
+		}
+
+		rows, err := r.DB().Select(
+			ctx,
+			`SELECT 
+				end.* 
+			FROM enderecos end
+			JOIN endereco_empresa endemp ON end.id = endemp.id_endereco
+			JOIN empresas emp ON endemp.id_empresa = emp.id
+			WHERE emp.id = ?
+				AND end.apagado IS NULL
+				AND emp.apagado IS NULL
+				AND endemp.apagado IS NULL`,
+			empresa.ID,
+		)
+
+		if err != nil {
+			log.Error(repositories.ERROR_SELECT, err)
+			return []models.Empresa{}, err
+		}
+
+		for rows.Next() {
+			var endereco = &models.Endereco{}
+
+			err := rows.Scan(
+				&endereco.ID,
+				&endereco.Logradouro,
+				&endereco.Numero,
+				&endereco.Complemento,
+				&endereco.Bairro,
+				&endereco.Cidade,
+				&endereco.CEP,
+				&endereco.Estado,
+				&endereco.Criado,
+				&endereco.Atualizado,
+				&endereco.Apagado,
+			)
+
+			if err != nil {
+				log.Error(repositories.ERROR_SELECT, err)
+				return []models.Empresa{}, err
+			}
+
+			empresa.Enderecos = append(empresa.Enderecos, endereco)
+		}
+
+		empresas = append(empresas, *empresa)
 	}
 
 	return empresas, nil
 }
 
-func (r *repository) GetByID(id string) (models.Empresa, error) {
-	empresa := models.Empresa{}
-	q, err := r.DB().Query()
-	if err != nil {
-		return empresa, err
-	}
-	result := q.Where("id = ?", id).First(&empresa)
+func (r *repository) FindByID(ctx context.Context, id string) (models.Empresa, error) {
+	rows, err := r.DB().Select(
+		ctx,
+		`SELECT	
+			* 
+		FROM empresas 
+		WHERE apagado IS NULL 
+		AND id = ?`,
+		id,
+	)
 
-	if result.Error != nil {
-		return empresa, result.Error
+	if err != nil {
+		log.Error(repositories.ERROR_SELECT, err)
+		return models.Empresa{}, err
+	}
+
+	defer rows.Close()
+
+	empresa := models.Empresa{}
+
+	for rows.Next() {
+		err = rows.Scan(
+			&empresa.ID,
+			&empresa.Nome,
+			&empresa.CNPJ,
+			&empresa.Criado,
+			&empresa.Atualizado,
+			&empresa.Apagado,
+		)
+
+		if err != nil {
+			log.Error(repositories.ERROR_SELECT_SCAN, err)
+			return models.Empresa{}, err
+		}
+
+		rows, err := r.DB().Select(
+			ctx,
+			`SELECT 
+				end.* 
+			FROM enderecos end
+			JOIN endereco_empresa endemp ON end.id = endemp.id_endereco
+			JOIN empresas emp ON endemp.id_empresa = emp.id
+			WHERE emp.id = ?
+				AND end.apagado IS NULL
+				AND emp.apagado IS NULL
+				AND endemp.apagado IS NULL`,
+			empresa.ID,
+		)
+
+		if err != nil {
+			log.Error(repositories.ERROR_SELECT, err)
+			return models.Empresa{}, err
+		}
+
+		for rows.Next() {
+			var endereco = &models.Endereco{}
+
+			err := rows.Scan(
+				&endereco.ID,
+				&endereco.Logradouro,
+				&endereco.Numero,
+				&endereco.Complemento,
+				&endereco.Bairro,
+				&endereco.Cidade,
+				&endereco.CEP,
+				&endereco.Estado,
+				&endereco.Criado,
+				&endereco.Atualizado,
+				&endereco.Apagado,
+			)
+
+			if err != nil {
+				log.Error(repositories.ERROR_SELECT, err)
+				return models.Empresa{}, err
+			}
+
+			empresa.Enderecos = append(empresa.Enderecos, endereco)
+		}
 	}
 
 	return empresa, nil
 }
 
-func (r *repository) Update(e models.Empresa) (models.Empresa, error) {
-	tx := r.DB().BeginTransaction()
+func (r *repository) Update(ctx context.Context, empresa models.Empresa) error {
+	_, err := r.DB().Write(
+		ctx,
+		`UPDATE empresas SET 
+		nome = ?, 
+		cnpj = ?, 
+		atualizado = ?
+		WHERE id = ?`,
+		empresa.Nome,
+		empresa.CNPJ,
+		empresa.Atualizado,
+		empresa.ID,
+	)
 
-	result := tx.Model(&e).Updates(&e)
-
-	if result.Error != nil {
-		r.DB().Rollback()
-		return e, result.Error
+	if err != nil {
+		log.Error(repositories.ERROR_UPDATE, err)
+		return err
 	}
 
-	if result.RowsAffected == 0 {
-		r.DB().Commit()
-		return e, gorm.ErrRecordNotFound
+	return nil
+}
+
+func (r *repository) Delete(ctx context.Context, id string) error {
+	_, err := r.DB().Write(
+		ctx,
+		`UPDATE empresas SET 
+		atualizado = CURRENT_DATE(),
+		apagado = CURRENT_DATE()
+		WHERE id = ?`,
+		id,
+	)
+
+	if err != nil {
+		log.Error(repositories.ERROR_DELETE, err)
+		return err
 	}
 
-	r.DB().Commit()
-	return e, nil
+	return nil
 }
