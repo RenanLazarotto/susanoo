@@ -25,22 +25,22 @@ func NewService(repository endereco.Repository) Service {
 	}
 }
 
-func (e *service) Create(ctx context.Context, endereco models.Endereco) (models.Endereco, error) {
-	return e.repository.Create(ctx, endereco)
+func (s *service) Create(ctx context.Context, endereco models.Endereco) (models.Endereco, error) {
+	return s.repository.Create(ctx, endereco)
 }
 
-func (e *service) FindAll(ctx context.Context, search, logradouro, numero, complemento, bairro, cidade, cep, estado string) ([]models.Endereco, error) {
-	return e.repository.FindAll(ctx, search, logradouro, numero, complemento, bairro, cidade, cep, estado)
+func (s *service) FindAll(ctx context.Context, search, logradouro, numero, complemento, bairro, cidade, cep, estado string) ([]models.Endereco, error) {
+	return s.repository.FindAll(ctx, search, logradouro, numero, complemento, bairro, cidade, cep, estado)
 }
 
-func (e *service) FindByID(ctx context.Context, id string) (models.Endereco, error) {
-	return e.repository.FindByID(ctx, id)
+func (s *service) FindByID(ctx context.Context, id string) (models.Endereco, error) {
+	return s.repository.FindByID(ctx, id)
 }
 
-func (e *service) Update(ctx context.Context, endereco models.Endereco) error {
-	return e.repository.Update(ctx, endereco)
+func (s *service) Update(ctx context.Context, endereco models.Endereco) error {
+	return s.repository.Update(ctx, endereco)
 }
 
-func (e *service) Delete(ctx context.Context, id string) error {
-	return e.repository.Delete(ctx, id)
+func (s *service) Delete(ctx context.Context, id string) error {
+	return s.repository.Delete(ctx, id)
 }
