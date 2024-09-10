@@ -4,6 +4,11 @@ import (
 	"time"
 )
 
+type EndereoEmpresaDTO struct {
+	IDEmpresa  string `json:"id_empresa"`
+	IDEndereco string `json:"id_endereco"`
+}
+
 type EnderecoEmpresa struct {
 	ID         int64      `json:"id"`
 	Empresa    Empresa    `json:"empresa"`
