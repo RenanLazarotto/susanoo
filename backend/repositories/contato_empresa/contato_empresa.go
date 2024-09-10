@@ -64,22 +64,22 @@ func (r *repository) FindAll(ctx context.Context, search, empresa, tipo, contato
 
 	if search != "" {
 		searchLike = fmt.Sprintf("%%%s%%", search)
-		conditions += " AND (nome LIKE ? OR cnpj LIKE ?)"
-		arguments = append(arguments, searchLike, searchLike)
+		conditions += " AND (cont.tipo LIKE ? OR cont.contato LIKE ? OR emp.nome LIKE ? OR emp.cnpj LIKE ?)"
+		arguments = append(arguments, searchLike, searchLike, searchLike, searchLike)
 	}
 
 	if empresa != "" {
-		conditions += " AND (id_empresa = ?)"
+		conditions += " AND (cont.id_empresa = ? OR emp.nome = ?)"
 		arguments = append(arguments, empresa)
 	}
 
 	if tipo != "" {
-		conditions += " AND (tipo = ?)"
+		conditions += " AND (cont.tipo = ?)"
 		arguments = append(arguments, tipo)
 	}
 
 	if contato != "" {
-		conditions += " AND (contato = ?)"
+		conditions += " AND (cont.contato = ?)"
 		arguments = append(arguments, contato)
 	}
 
