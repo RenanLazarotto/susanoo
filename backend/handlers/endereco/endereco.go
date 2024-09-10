@@ -6,7 +6,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 
 	"tsukuyomi/models"
-	enderecoService "tsukuyomi/services/endereco"
+	"tsukuyomi/services/endereco"
 )
 
 type EnderecoHandler interface {
@@ -18,7 +18,7 @@ type EnderecoHandler interface {
 }
 
 type enderecoHandler struct {
-	Service enderecoService.Service
+	Service endereco.Service
 }
 
 var (
@@ -38,7 +38,7 @@ var (
 	FIND_ALL_RESULT_EMPTY = "Nenhum resultado encontrado para os parâmetros informados."
 )
 
-func NewHandler(service enderecoService.Service) EnderecoHandler {
+func NewHandler(service endereco.Service) EnderecoHandler {
 	return &enderecoHandler{
 		Service: service,
 	}

@@ -6,7 +6,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 
 	"tsukuyomi/models"
-	empresaService "tsukuyomi/services/empresa"
+	"tsukuyomi/services/empresa"
 )
 
 type EmpresaHandler interface {
@@ -18,7 +18,7 @@ type EmpresaHandler interface {
 }
 
 type empresaHandler struct {
-	Service empresaService.Service
+	Service empresa.Service
 }
 
 var (
@@ -38,7 +38,7 @@ var (
 	FIND_ALL_RESULT_EMPTY = "Nenhum resultado encontrado para os parâmetros informados."
 )
 
-func NewHandler(service empresaService.Service) EmpresaHandler {
+func NewHandler(service empresa.Service) EmpresaHandler {
 	return &empresaHandler{
 		Service: service,
 	}
