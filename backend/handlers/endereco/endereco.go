@@ -33,6 +33,9 @@ var (
 	FIND_BY_SUCCESS  = "Consulta realizada com sucesso."
 	UPDATE_SUCCESS   = "Endereço atualizado com sucesso."
 	DELETE_SUCCESS   = "Endereço apagado com sucesso."
+
+	FIND_BY_RESULT_EMPTY  = "Nenhum resultado encontrado para os parâmetros informados."
+	FIND_ALL_RESULT_EMPTY = "Nenhum resultado encontrado para os parâmetros informados."
 )
 
 func NewHandler(service enderecoService.Service) EnderecoHandler {
@@ -124,6 +127,12 @@ func (h *enderecoHandler) FindAll(c *fiber.Ctx) error {
 		})
 	}
 
+	if len(result) == 0 {
+		return c.Status(fiber.StatusOK).JSON(models.Response{
+			Message: FIND_ALL_RESULT_EMPTY,
+		})
+	}
+
 	return c.Status(fiber.StatusOK).JSON(models.Response{
 		Count:   len(result),
 		Message: FIND_ALL_SUCCESS,
@@ -160,6 +169,12 @@ func (h *enderecoHandler) FindByID(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusInternalServerError).JSON(models.Response{
 			Message: ERROR_FIND_BY,
 			Errors:  []string{err.Error()},
+		})
+	}
+
+	if result.ID == 0 {
+		return c.Status(fiber.StatusOK).JSON(models.Response{
+			Message: FIND_BY_RESULT_EMPTY,
 		})
 	}
 
