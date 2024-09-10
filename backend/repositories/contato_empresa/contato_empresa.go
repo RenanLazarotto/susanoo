@@ -23,7 +23,6 @@ type repository struct {
 }
 
 func NewRepository(repo repositories.Repository) Repository {
-
 	return &repository{
 		Repository: repo,
 	}
