@@ -745,6 +745,103 @@ paths:
       summary: Cadastra um novo endereço
       tags:
       - Endereco
+  /endereco-empresa/assign:
+    post:
+      consumes:
+      - application/json
+      description: Faz a associação de um endereço com uma empresa através dos IDs
+        de ambas as entidades.
+      parameters:
+      - description: ID da empresa
+        in: body
+        name: id_empresa
+        required: true
+        schema:
+          type: integer
+      - description: ID do endereço
+        in: body
+        name: id_endereco
+        required: true
+        schema:
+          type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.Response'
+      summary: Associa um endereço a uma empresa.
+      tags:
+      - EnderecoEmpresa
+  /endereco-empresa/empresas-por-endereco/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Consulta todas as empresas que estão associadas com um endereço,
+        pelo ID do endereço.
+      parameters:
+      - description: ID do endereço
+        in: path
+        name: id_endereco
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.Response'
+      summary: Retorna as empresas associadas à um endereço.
+      tags:
+      - EnderecoEmpresa
+  /endereco-empresa/enderecos-por-empresa/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Consulta todos os endereços que estão associadas com uma empresa,
+        pelo ID da empresa.
+      parameters:
+      - description: ID da empresa
+        in: path
+        name: id_empresa
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.Response'
+      summary: Retorna os endereços associados à uma empresa
+      tags:
+      - EnderecoEmpresa
   /endereco/{id}:
     delete:
       consumes:

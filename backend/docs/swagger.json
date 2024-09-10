@@ -1093,6 +1093,149 @@
                 }
             }
         },
+        "/endereco-empresa/assign": {
+            "post": {
+                "description": "Faz a associação de um endereço com uma empresa através dos IDs de ambas as entidades.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "EnderecoEmpresa"
+                ],
+                "summary": "Associa um endereço a uma empresa.",
+                "parameters": [
+                    {
+                        "description": "ID da empresa",
+                        "name": "id_empresa",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "description": "ID do endereço",
+                        "name": "id_endereco",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/endereco-empresa/empresas-por-endereco/{id}": {
+            "get": {
+                "description": "Consulta todas as empresas que estão associadas com um endereço, pelo ID do endereço.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "EnderecoEmpresa"
+                ],
+                "summary": "Retorna as empresas associadas à um endereço.",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID do endereço",
+                        "name": "id_endereco",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/endereco-empresa/enderecos-por-empresa/{id}": {
+            "get": {
+                "description": "Consulta todos os endereços que estão associadas com uma empresa, pelo ID da empresa.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "EnderecoEmpresa"
+                ],
+                "summary": "Retorna os endereços associados à uma empresa",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID da empresa",
+                        "name": "id_empresa",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/endereco/{id}": {
             "get": {
                 "description": "Retorna as informações de um endereço de acordo com seu ID",
