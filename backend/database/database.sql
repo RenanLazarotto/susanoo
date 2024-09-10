@@ -54,21 +54,9 @@ CREATE TABLE contato_empresa (
 CREATE TABLE empregos (
 	id INTEGER NOT NULL AUTO_INCREMENT UNIQUE,
 	id_empresa INTEGER NOT NULL,
-	ocupacao_inicial VARCHAR(255) NOT NULL,
-	remuneracao_inicial DECIMAL(15,2) NOT NULL,
-	tipo_contrato VARCHAR(255) NOT NULL,
-	criado DATETIME NOT NULL,
-	atualizado DATETIME,
-	apagado DATETIME,
-	PRIMARY KEY(id)
-);
-
-
-CREATE TABLE ocupacoes (
-	id INTEGER NOT NULL AUTO_INCREMENT UNIQUE,
-	id_emprego INTEGER NOT NULL,
 	ocupacao VARCHAR(255) NOT NULL,
 	remuneracao_inicial DECIMAL(15,2) NOT NULL,
+	tipo_contrato VARCHAR(255) NOT NULL,
 	data_inicio DATETIME NOT NULL,
 	data_fim DATETIME,
 	carga_horaria INTEGER NOT NULL COMMENT "Carga horária definida em minutos",
@@ -77,7 +65,6 @@ CREATE TABLE ocupacoes (
 	apagado DATETIME,
 	PRIMARY KEY(id)
 );
-
 
 CREATE TABLE remuneracoes (
 	id INTEGER NOT NULL AUTO_INCREMENT UNIQUE,
@@ -137,7 +124,7 @@ CREATE TABLE detalhamento_holerite (
 
 CREATE TABLE historico (
 	id INTEGER NOT NULL AUTO_INCREMENT UNIQUE,
-	tabela ENUM("banco_horas", "cartao_ponto", "contato_empresa", "detalhamento_holerite", "empregos", "empresas", "enderecos", "endereco_empresa", "holerites", "ocupacoes", "remuneracoes") NOT NULL,
+	tabela ENUM("banco_horas", "cartao_ponto", "contato_empresa", "detalhamento_holerite", "empregos", "empresas", "enderecos", "endereco_empresa", "holerites", "remuneracoes") NOT NULL,
 	acao ENUM("INSERT", "UPDATE", "DELETE") NOT NULL,
 	descricao TEXT(65535) NOT NULL,
 	dados_antigos JSON NOT NULL,
@@ -157,14 +144,8 @@ ON UPDATE CASCADE ON DELETE CASCADE;
 ALTER TABLE empregos
 ADD FOREIGN KEY(id_empresa) REFERENCES empresas(id)
 ON UPDATE CASCADE ON DELETE CASCADE;
-ALTER TABLE ocupacoes
-ADD FOREIGN KEY(id_emprego) REFERENCES empregos(id)
-ON UPDATE CASCADE ON DELETE CASCADE;
 ALTER TABLE remuneracoes
 ADD FOREIGN KEY(id_emprego) REFERENCES empregos(id)
-ON UPDATE CASCADE ON DELETE CASCADE;
-ALTER TABLE remuneracoes
-ADD FOREIGN KEY(id_ocupacao) REFERENCES ocupacoes(id)
 ON UPDATE CASCADE ON DELETE CASCADE;
 ALTER TABLE cartao_ponto
 ADD FOREIGN KEY(id_emprego) REFERENCES empregos(id)
