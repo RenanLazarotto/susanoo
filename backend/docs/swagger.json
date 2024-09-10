@@ -8,6 +8,290 @@
     },
     "basePath": "/",
     "paths": {
+        "/contato-empresa": {
+            "get": {
+                "description": "Retorna todos os contatos que atendam aos critérios informados",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ContatoEmpresa"
+                ],
+                "summary": "Retorna todos os contatos",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Campo aberto para pesquisa",
+                        "name": "search",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Nome da empresa",
+                        "name": "empresa",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "telefone",
+                            "whatsapp",
+                            "email"
+                        ],
+                        "type": "string",
+                        "description": "Tipo do contato. Aceita apenas os valores 'telefone', 'whatsapp' e 'email'",
+                        "name": "tipo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "O contato em si",
+                        "name": "contato",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.Response"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Cadastra um novo contato de empresa de acordo com as informações fornecidas. O contato deve ser único de acordo com seu tipo.\nAo cadastrar um contato, os dados da empresa não são retornados.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ContatoEmpresa"
+                ],
+                "summary": "Cadastra um novo contato de empresa",
+                "parameters": [
+                    {
+                        "description": "ID da empresa",
+                        "name": "id_empresa",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "description": "O tipo de contato. Aceita apenas os valores 'telefone', 'whatsapp' e 'email'",
+                        "name": "tipo",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "telefone",
+                                "whatsapp",
+                                "email"
+                            ]
+                        }
+                    },
+                    {
+                        "description": "O contato em si",
+                        "name": "contato",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/contato-empresa/{id}": {
+            "get": {
+                "description": "Retorna as informações de um contato de uma empresa de acordo com seu ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ContatoEmpresa"
+                ],
+                "summary": "Consulta um contato de empresa por ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "O ID do contato da empresa para retornar",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.Response"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "Atualiza um registro de contato de uma empresa de acordo com o ID e as informações informadas",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ContatoEmpresa"
+                ],
+                "summary": "Atualiza um contato de empresa",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "O ID do contato de empresa a ser atualizado",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "ID da empresa para atualizar",
+                        "name": "id_empresa",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "telefone",
+                            "whatsapp",
+                            "email"
+                        ],
+                        "type": "string",
+                        "description": "Tipo do contato. Aceita apenas os valores 'telefone', 'whatsapp' e 'email'",
+                        "name": "tipo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "O contato em si",
+                        "name": "contato",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.Response"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Realiza um soft-delete de um contato de empresa com base no ID informado",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ContatoEmpresa"
+                ],
+                "summary": "Apaga um contato de empresa",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "O ID do contato a ser apagada",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/empresa": {
             "get": {
                 "description": "Retorna todos as empresas que atendam aos critérios informados",
