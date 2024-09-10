@@ -79,8 +79,13 @@ func (r *repository) FindAll(ctx context.Context, search, nome, cnpj string) ([]
 	rows, err := r.DB().Select(
 		ctx,
 		`SELECT	
-			* 
-		FROM empresas 
+			emp.id,
+			emp.nome,
+			emp.cnpj,
+			emp.criado,
+			emp.atualizado,
+			emp.apagado
+		FROM empresas emp
 		WHERE apagado IS NULL 
 		`+conditions,
 		arguments...,
@@ -115,7 +120,17 @@ func (r *repository) FindAll(ctx context.Context, search, nome, cnpj string) ([]
 		rows, err := r.DB().Select(
 			ctx,
 			`SELECT 
-				end.* 
+				end.id,
+				end.logradouro,
+				end.numero,
+				end.complemento,
+				end.bairro,
+				end.cidade,
+				end.cep,
+				end.estado,
+				end.criado,
+				end.atualizado,
+				end.apagado
 			FROM enderecos end
 			JOIN endereco_empresa endemp ON end.id = endemp.id_endereco
 			JOIN empresas emp ON endemp.id_empresa = emp.id
@@ -166,8 +181,13 @@ func (r *repository) FindByID(ctx context.Context, id string) (models.Empresa, e
 	rows, err := r.DB().Select(
 		ctx,
 		`SELECT	
-			* 
-		FROM empresas 
+			emp.id,
+			emp.nome,
+			emp.cnpj,
+			emp.criado,
+			emp.atualizado,
+			emp.apagado
+		FROM empresas emp
 		WHERE apagado IS NULL 
 		AND id = ?`,
 		id,
@@ -200,7 +220,17 @@ func (r *repository) FindByID(ctx context.Context, id string) (models.Empresa, e
 		rows, err := r.DB().Select(
 			ctx,
 			`SELECT 
-				end.* 
+				end.id,
+				end.logradouro,
+				end.numero,
+				end.complemento,
+				end.bairro,
+				end.cidade,
+				end.cep,
+				end.estado,
+				end.criado,
+				end.atualizado,
+				end.apagado 
 			FROM enderecos end
 			JOIN endereco_empresa endemp ON end.id = endemp.id_endereco
 			JOIN empresas emp ON endemp.id_empresa = emp.id
