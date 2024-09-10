@@ -216,6 +216,248 @@ paths:
       summary: Atualiza um contato de empresa
       tags:
       - ContatoEmpresa
+  /emprego:
+    get:
+      consumes:
+      - application/json
+      description: Retorna todos os empregos que atendam aos critérios informados
+      parameters:
+      - description: Campo aberto para pesquisa
+        in: query
+        name: search
+        type: string
+      - description: Nome do empresa
+        in: query
+        name: empresa
+        type: string
+      - description: Nome da ocupação
+        in: query
+        name: ocupacao
+        type: string
+      - description: Valor da remuneração inicial
+        in: query
+        name: remuneracao_inicial
+        type: string
+      - description: Tipo de contratação
+        in: query
+        name: tipo_contrato
+        type: string
+      - description: Data de admissão
+        in: query
+        name: data_inicio
+        type: string
+      - description: Data de demissão
+        in: query
+        name: data_fim
+        type: string
+      - description: Carga horária em minutos
+        in: query
+        name: carga_horaria
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.Response'
+      summary: Retorna todos os empregos
+      tags:
+      - Emprego
+    post:
+      consumes:
+      - application/json
+      description: Cadastra um novo emprego de acordo com as informações fornecidas
+      parameters:
+      - description: ID da empresa
+        in: body
+        name: id_empresa
+        required: true
+        schema:
+          type: integer
+      - description: Nome da ocupação
+        in: body
+        name: ocupacao
+        required: true
+        schema:
+          type: string
+      - description: Valor da remuneração inicial
+        in: body
+        name: remuneracao_inicial
+        required: true
+        schema:
+          type: number
+      - description: Tipo de contratação
+        in: body
+        name: tipo_contrato
+        required: true
+        schema:
+          type: string
+      - description: Data de admissão
+        in: body
+        name: data_inicio
+        required: true
+        schema:
+          type: string
+      - description: Data de demissão
+        in: body
+        name: data_fim
+        required: true
+        schema:
+          type: string
+      - description: Carga horária em minutos
+        in: body
+        name: carga_horaria
+        required: true
+        schema:
+          type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.Response'
+      summary: Cadastra um novo emprego
+      tags:
+      - Emprego
+  /emprego/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Realiza um soft-delete de umo emprego com base no ID informado
+      parameters:
+      - description: O ID do emprego a ser apagada
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.Response'
+      summary: Apaga umo emprego
+      tags:
+      - Emprego
+    get:
+      consumes:
+      - application/json
+      description: Retorna as informações de um emprego de acordo com seu ID
+      parameters:
+      - description: O ID do emprego para retornar
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.Response'
+      summary: Consulta um emprego por ID
+      tags:
+      - Emprego
+    put:
+      consumes:
+      - application/json
+      description: Atualiza um registro de emprego de acordo com o ID e as informações
+        informadas
+      parameters:
+      - description: O ID do emprego a ser atualizada
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: ID da empresa
+        in: body
+        name: id_empresa
+        schema:
+          type: integer
+      - description: Nome da ocupação
+        in: body
+        name: ocupacao
+        schema:
+          type: string
+      - description: Valor da remuneração inicial
+        in: body
+        name: remuneracao_inicial
+        schema:
+          type: number
+      - description: Tipo de contratação
+        in: body
+        name: tipo_contrato
+        schema:
+          type: string
+      - description: Data de admissão
+        in: body
+        name: data_inicio
+        schema:
+          type: string
+      - description: Data de demissão
+        in: body
+        name: data_fim
+        schema:
+          type: string
+      - description: Carga horária em minutos
+        in: body
+        name: carga_horaria
+        schema:
+          type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.Response'
+      summary: Atualiza um emprego
+      tags:
+      - Emprego
   /empresa:
     get:
       consumes:

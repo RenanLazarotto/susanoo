@@ -299,6 +299,373 @@ const docTemplate = `{
                 }
             }
         },
+        "/emprego": {
+            "get": {
+                "description": "Retorna todos os empregos que atendam aos critérios informados",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Emprego"
+                ],
+                "summary": "Retorna todos os empregos",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Campo aberto para pesquisa",
+                        "name": "search",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Nome do empresa",
+                        "name": "empresa",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Nome da ocupação",
+                        "name": "ocupacao",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Valor da remuneração inicial",
+                        "name": "remuneracao_inicial",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Tipo de contratação",
+                        "name": "tipo_contrato",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Data de admissão",
+                        "name": "data_inicio",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Data de demissão",
+                        "name": "data_fim",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Carga horária em minutos",
+                        "name": "carga_horaria",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.Response"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Cadastra um novo emprego de acordo com as informações fornecidas",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Emprego"
+                ],
+                "summary": "Cadastra um novo emprego",
+                "parameters": [
+                    {
+                        "description": "ID da empresa",
+                        "name": "id_empresa",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "description": "Nome da ocupação",
+                        "name": "ocupacao",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "Valor da remuneração inicial",
+                        "name": "remuneracao_inicial",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "number"
+                        }
+                    },
+                    {
+                        "description": "Tipo de contratação",
+                        "name": "tipo_contrato",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "Data de admissão",
+                        "name": "data_inicio",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "Data de demissão",
+                        "name": "data_fim",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "Carga horária em minutos",
+                        "name": "carga_horaria",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/emprego/{id}": {
+            "get": {
+                "description": "Retorna as informações de um emprego de acordo com seu ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Emprego"
+                ],
+                "summary": "Consulta um emprego por ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "O ID do emprego para retornar",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.Response"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "Atualiza um registro de emprego de acordo com o ID e as informações informadas",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Emprego"
+                ],
+                "summary": "Atualiza um emprego",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "O ID do emprego a ser atualizada",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "ID da empresa",
+                        "name": "id_empresa",
+                        "in": "body",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "description": "Nome da ocupação",
+                        "name": "ocupacao",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "Valor da remuneração inicial",
+                        "name": "remuneracao_inicial",
+                        "in": "body",
+                        "schema": {
+                            "type": "number"
+                        }
+                    },
+                    {
+                        "description": "Tipo de contratação",
+                        "name": "tipo_contrato",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "Data de admissão",
+                        "name": "data_inicio",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "Data de demissão",
+                        "name": "data_fim",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "Carga horária em minutos",
+                        "name": "carga_horaria",
+                        "in": "body",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.Response"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Realiza um soft-delete de umo emprego com base no ID informado",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Emprego"
+                ],
+                "summary": "Apaga umo emprego",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "O ID do emprego a ser apagada",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/empresa": {
             "get": {
                 "description": "Retorna todos as empresas que atendam aos critérios informados",
