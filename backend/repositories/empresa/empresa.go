@@ -31,7 +31,7 @@ func NewRepository(repo repositories.Repository) Repository {
 func (r *repository) Create(ctx context.Context, empresa models.Empresa) (models.Empresa, error) {
 	result, err := r.DB().Write(
 		ctx,
-		`INSERT INTO empresas(nome, cnpj, criado, atualizado)
+		`INSERT INTO empresas(nome, cnpj, criado)
 		VALUES(?, ?, ?)`,
 		empresa.Nome,
 		empresa.CNPJ,
