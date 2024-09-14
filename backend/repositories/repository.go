@@ -6,11 +6,12 @@ import (
 )
 
 const (
-	ERROR_DELETE      = "error while soft-deleting record"
-	ERROR_INSERT      = "error while inserting record"
-	ERROR_SELECT      = "error while querying records"
-	ERROR_SELECT_SCAN = "error while scanning result into model"
-	ERROR_UPDATE      = "error while updating record"
+	ERROR_DELETE      = "erro ao apagar registro"
+	ERROR_INSERT      = "erro ao inserir registro"
+	ERROR_SELECT      = "erro ao realizer consulta"
+	ERROR_SELECT_SCAN = "erro ao associar valores da consulta à struct"
+	ERROR_UPDATE      = "erro ao atualizar registro"
+	ERROR_VALIDATE    = "erro ao validar struct"
 )
 
 type Repository interface {
