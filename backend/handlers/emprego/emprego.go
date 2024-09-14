@@ -70,6 +70,13 @@ func (h *empregoHandler) Create(c *fiber.Ctx) error {
 
 	c.BodyParser(&emprego)
 
+	if err := emprego.Validate(); err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(models.Response{
+			Message: ERROR_CREATE,
+			Errors:  []string{err.Error()},
+		})
+	}
+
 	emprego.Criado = time.Now()
 
 	emprego, err := h.Service.Create(c.UserContext(), emprego)
