@@ -29,6 +29,8 @@ func NewRepository(repo repositories.Repository) Repository {
 }
 
 func (r *repository) Create(ctx context.Context, endereco models.Endereco) (models.Endereco, error) {
+	r.DB().BeginTransaction(ctx)
+
 	result, err := r.DB().Write(
 		ctx,
 		`INSERT INTO enderecos(logradouro, numero, complemento, bairro, cidade, cep, estado, criado)
@@ -44,15 +46,21 @@ func (r *repository) Create(ctx context.Context, endereco models.Endereco) (mode
 	)
 
 	if err != nil {
+		r.DB().Rollback(ctx)
+
 		log.Error(repositories.ERROR_INSERT, err)
 		return models.Endereco{}, err
 	}
 
 	id, err := result.LastInsertId()
 	if err != nil {
+		r.DB().Rollback(ctx)
+
 		log.Error(repositories.ERROR_INSERT, err)
 		return models.Endereco{}, err
 	}
+
+	r.DB().Commit(ctx)
 
 	endereco.ID = id
 
@@ -308,6 +316,8 @@ func (r *repository) FindByID(ctx context.Context, id string) (models.Endereco, 
 }
 
 func (r *repository) Update(ctx context.Context, endereco models.Endereco) error {
+	r.DB().BeginTransaction(ctx)
+
 	_, err := r.DB().Write(
 		ctx,
 		`UPDATE enderecos SET 
@@ -332,14 +342,20 @@ func (r *repository) Update(ctx context.Context, endereco models.Endereco) error
 	)
 
 	if err != nil {
+		r.DB().Rollback(ctx)
+
 		log.Error(repositories.ERROR_UPDATE, err)
 		return err
 	}
+
+	r.DB().Commit(ctx)
 
 	return nil
 }
 
 func (r *repository) Delete(ctx context.Context, id string) error {
+	r.DB().BeginTransaction(ctx)
+
 	_, err := r.DB().Write(
 		ctx,
 		`UPDATE enderecos SET 
@@ -350,9 +366,13 @@ func (r *repository) Delete(ctx context.Context, id string) error {
 	)
 
 	if err != nil {
+		r.DB().Rollback(ctx)
+
 		log.Error(repositories.ERROR_DELETE, err)
 		return err
 	}
+
+	r.DB().Commit(ctx)
 
 	return nil
 }

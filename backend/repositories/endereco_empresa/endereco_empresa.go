@@ -33,6 +33,8 @@ func (r *repository) Assign(ctx context.Context, empresa models.Empresa, enderec
 		Criado:   time.Now(),
 	}
 
+	r.DB().BeginTransaction(ctx)
+
 	result, err := r.DB().Write(
 		ctx,
 		`INSERT INTO endereco_empresa(id_empresa, id_endereco, criado)
@@ -43,15 +45,21 @@ func (r *repository) Assign(ctx context.Context, empresa models.Empresa, enderec
 	)
 
 	if err != nil {
+		r.DB().Rollback(ctx)
+
 		log.Error(repositories.ERROR_INSERT, err)
 		return models.EnderecoEmpresa{}, err
 	}
 
 	id, err := result.LastInsertId()
 	if err != nil {
+		r.DB().Rollback(ctx)
+
 		log.Error(repositories.ERROR_INSERT, err)
 		return models.EnderecoEmpresa{}, err
 	}
+
+	r.DB().Commit(ctx)
 
 	enderecoEmpresa.ID = id
 

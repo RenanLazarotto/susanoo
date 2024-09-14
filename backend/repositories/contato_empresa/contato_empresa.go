@@ -29,6 +29,8 @@ func NewRepository(repo repositories.Repository) Repository {
 }
 
 func (r *repository) Create(ctx context.Context, contato models.ContatoEmpresa) (models.ContatoEmpresa, error) {
+	r.DB().BeginTransaction(ctx)
+
 	result, err := r.DB().Write(
 		ctx,
 		`INSERT INTO contato_empresa(id_empresa, tipo, contato, criado)
@@ -40,15 +42,21 @@ func (r *repository) Create(ctx context.Context, contato models.ContatoEmpresa) 
 	)
 
 	if err != nil {
+		r.DB().Rollback(ctx)
+
 		log.Error(repositories.ERROR_INSERT, err)
 		return models.ContatoEmpresa{}, err
 	}
 
 	id, err := result.LastInsertId()
 	if err != nil {
+		r.DB().Rollback(ctx)
+
 		log.Error(repositories.ERROR_INSERT, err)
 		return models.ContatoEmpresa{}, err
 	}
+
+	r.DB().Commit(ctx)
 
 	contato.ID = id
 
@@ -202,6 +210,8 @@ func (r *repository) FindByID(ctx context.Context, id string) (models.ContatoEmp
 }
 
 func (r *repository) Update(ctx context.Context, contato models.ContatoEmpresa) error {
+	r.DB().BeginTransaction(ctx)
+
 	_, err := r.DB().Write(
 		ctx,
 		`UPDATE contato_empresa SET 
@@ -218,14 +228,20 @@ func (r *repository) Update(ctx context.Context, contato models.ContatoEmpresa) 
 	)
 
 	if err != nil {
+		r.DB().Rollback(ctx)
+
 		log.Error(repositories.ERROR_UPDATE, err)
 		return err
 	}
+
+	r.DB().Commit(ctx)
 
 	return nil
 }
 
 func (r *repository) Delete(ctx context.Context, id string) error {
+	r.DB().BeginTransaction(ctx)
+
 	_, err := r.DB().Write(
 		ctx,
 		`UPDATE contato_empresa SET 
@@ -236,9 +252,13 @@ func (r *repository) Delete(ctx context.Context, id string) error {
 	)
 
 	if err != nil {
+		r.DB().Rollback(ctx)
+
 		log.Error(repositories.ERROR_DELETE, err)
 		return err
 	}
+
+	r.DB().Commit(ctx)
 
 	return nil
 }
