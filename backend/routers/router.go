@@ -8,6 +8,7 @@ import (
 	_ "tsukuyomi/docs"
 	"tsukuyomi/repositories"
 	contatoEmpresa "tsukuyomi/routers/contato_empresa"
+	"tsukuyomi/routers/emprego"
 	"tsukuyomi/routers/empresa"
 	"tsukuyomi/routers/endereco"
 	enderecoEmpresa "tsukuyomi/routers/endereco_empresa"
@@ -23,4 +24,5 @@ func SetupRouter(app *fiber.App, config *config.Config) {
 	endereco.RegisterRoutes(app, repository)
 	contatoEmpresa.RegisterRoutes(app, repository)
 	enderecoEmpresa.RegisterRoutes(app, repository)
+	emprego.RegisterRoutes(app, repository)
 }
