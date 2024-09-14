@@ -157,7 +157,6 @@ func (r *repository) FindAll(ctx context.Context, search, empresa, ocupacao, rem
 			&emprego.ID,
 			&emprego.Empresa.ID,
 			&emprego.Empresa.Nome,
-			&emprego.Empresa.Nome,
 			&emprego.Empresa.CNPJ,
 			&emprego.Empresa.Criado,
 			&emprego.Empresa.Atualizado,
@@ -174,7 +173,12 @@ func (r *repository) FindAll(ctx context.Context, search, empresa, ocupacao, rem
 		)
 
 		if err != nil {
-			log.Error(repositories.ERROR_SELECT_SCAN, err)
+			log.Error(repositories.ERROR_SELECT_SCAN, "erro", err)
+			return []models.Emprego{}, err
+		}
+
+		if err := emprego.Validate(); err != nil {
+			log.Error(repositories.ERROR_VALIDATE, "erro", err)
 			return []models.Emprego{}, err
 		}
 
