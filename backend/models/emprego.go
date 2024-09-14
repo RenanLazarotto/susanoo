@@ -1,6 +1,10 @@
 package models
 
-import "time"
+import (
+	"time"
+
+	"github.com/invopop/validation"
+)
 
 type Emprego struct {
 	ID                 int64      `json:"id"`
@@ -15,4 +19,16 @@ type Emprego struct {
 	Criado             time.Time  `json:"criado"`
 	Atualizado         *time.Time `json:"atualizado"`
 	Apagado            *time.Time `json:"apagado"`
+}
+
+func (e Emprego) Validate() error {
+	return validation.ValidateStruct(
+		&e,
+		validation.Field(&e.IDEmpresa, validation.Required.When(e.Empresa.ID == 0)),
+		validation.Field(&e.Empresa, validation.Required.When(e.IDEmpresa == 0)),
+		validation.Field(&e.Ocupacao, validation.Required),
+		validation.Field(&e.RemuneracaoInicial, validation.Required),
+		validation.Field(&e.TipoContrato, validation.Required),
+		validation.Field(&e.DataInicio, validation.Required),
+	)
 }
