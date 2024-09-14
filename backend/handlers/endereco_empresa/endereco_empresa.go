@@ -109,7 +109,7 @@ func (h *enderecoEmpresaHandler) Assign(c *fiber.Ctx) error {
 // @Accept  json
 // @Produce json
 //
-// @Param id_endereco path int true "ID do endereço"
+// @Param id path int true "ID do endereço"
 //
 // @Success 200 {object} models.Response
 // @Failure 400 {object} models.Response
@@ -117,7 +117,7 @@ func (h *enderecoEmpresaHandler) Assign(c *fiber.Ctx) error {
 //
 // @Router /endereco-empresa/empresas-por-endereco/{id} [get]
 func (h *enderecoEmpresaHandler) GetEmpresasByEndereco(c *fiber.Ctx) error {
-	id_endereco := c.Params("id_endereco", "")
+	id_endereco := c.Params("id", "")
 
 	result, err := h.Service.GetEmpresasByEndereco(c.UserContext(), id_endereco)
 	if err != nil {
@@ -148,7 +148,7 @@ func (h *enderecoEmpresaHandler) GetEmpresasByEndereco(c *fiber.Ctx) error {
 // @Accept  json
 // @Produce json
 //
-// @Param id_empresa path int true "ID da empresa"
+// @Param id path int true "ID da empresa"
 //
 // @Success 200 {object} models.Response
 // @Failure 400 {object} models.Response
@@ -156,7 +156,7 @@ func (h *enderecoEmpresaHandler) GetEmpresasByEndereco(c *fiber.Ctx) error {
 //
 // @Router /endereco-empresa/enderecos-por-empresa/{id} [get]
 func (h *enderecoEmpresaHandler) GetEnderecosByEmpresa(c *fiber.Ctx) error {
-	id_empresa := c.Params("id_empresa", "")
+	id_empresa := c.Params("id", "")
 
 	result, err := h.Service.GetEnderecosByEmpresa(c.UserContext(), id_empresa)
 	if err != nil {
