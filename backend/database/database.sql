@@ -11,7 +11,6 @@ CREATE TABLE empresas (
 	PRIMARY KEY(id)
 );
 
-
 CREATE TABLE enderecos (
 	id INTEGER NOT NULL AUTO_INCREMENT UNIQUE,
 	logradouro VARCHAR(255) NOT NULL UNIQUE,
@@ -27,7 +26,6 @@ CREATE TABLE enderecos (
 	PRIMARY KEY(id)
 );
 
-
 CREATE TABLE endereco_empresa (
 	id INTEGER NOT NULL AUTO_INCREMENT UNIQUE,
 	id_empresa INTEGER NOT NULL,
@@ -37,7 +35,6 @@ CREATE TABLE endereco_empresa (
 	apagado DATETIME,
 	PRIMARY KEY(id)
 );
-
 
 CREATE TABLE contato_empresa (
 	id INTEGER NOT NULL AUTO_INCREMENT UNIQUE,
@@ -49,7 +46,6 @@ CREATE TABLE contato_empresa (
 	apagado DATETIME,
 	PRIMARY KEY(id)
 );
-
 
 CREATE TABLE empregos (
 	id INTEGER NOT NULL AUTO_INCREMENT UNIQUE,
@@ -78,7 +74,6 @@ CREATE TABLE remuneracoes (
 	PRIMARY KEY(id)
 );
 
-
 CREATE TABLE cartao_ponto (
 	id INTEGER NOT NULL AUTO_INCREMENT UNIQUE,
 	id_emprego INTEGER NOT NULL,
@@ -91,7 +86,6 @@ CREATE TABLE cartao_ponto (
 	PRIMARY KEY(id)
 );
 
-
 CREATE TABLE banco_horas (
 	id INTEGER NOT NULL AUTO_INCREMENT UNIQUE,
 	id_emprego INTEGER NOT NULL,
@@ -103,7 +97,6 @@ CREATE TABLE banco_horas (
 	PRIMARY KEY(id)
 );
 
-
 CREATE TABLE holerites (
 	id INTEGER NOT NULL AUTO_INCREMENT UNIQUE,
 	id_emprego INTEGER NOT NULL,
@@ -111,7 +104,6 @@ CREATE TABLE holerites (
 	referencia DATETIME NOT NULL,
 	PRIMARY KEY(id)
 );
-
 
 CREATE TABLE detalhamento_holerite (
 	id INTEGER NOT NULL AUTO_INCREMENT UNIQUE,
